@@ -5,7 +5,7 @@ spring:
     username: dtuser
     password: 1234
     driver-class-name: org.mariadb.jdbc.Driver
-    
+
     # HikariCP 연결 풀 설정
     hikari:
       maximum-pool-size: 10
@@ -125,21 +125,3 @@ springdoc:
     enabled: false
   api-docs:
     enabled: false
-
----
-# 테스트 환경 설정
-spring:
-  config:
-    activate:
-      on-profile: test
-  datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password: 
-    driver-class-name: org.h2.Driver
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-  h2:
-    console:
-      enabled: true
