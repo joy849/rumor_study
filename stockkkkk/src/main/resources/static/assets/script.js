@@ -1,0 +1,997 @@
+// ===== 유틸리티 =====
+const $ = (s,el=document)=>el.querySelector(s);
+const $$ = (s,el=document)=>Array.from(el.querySelectorAll(s));
+const isFocusable = (el)=>el && !el.disabled && el.tabIndex > -1 || /^(A|BUTTON|INPUT|SELECT|TEXTAREA)$/.test(el?.tagName);
+
+// 포커스 트랩 (모달/드로어용)
+function createFocusTrap(container){
+    let lastFocused = null;
+    const selector = 'a[href],button,textarea,input,select,[tabindex]:not([tabindex="-1"])';
+    function onKey(e){
+        if(e.key !== 'Tab') return;
+        const nodes = $$(selector, container).filter(el=>el.offsetParent!==null && !el.hasAttribute('inert'));
+        if(!nodes.length) return;
+        const first = nodes[0], last = nodes[nodes.length-1];
+        if(e.shiftKey && document.activeElement === first){ last.focus(); e.preventDefault(); }
+        else if(!e.shiftKey && document.activeElement === last){ first.focus(); e.preventDefault(); }
+    }
+    return {
+        activate(){
+            lastFocused = document.activeElement;
+            container.addEventListener('keydown', onKey);
+            const first = $$(selector, container).find(isFocusable);
+            first?.focus();
+        },
+        deactivate(){
+            container.removeEventListener('keydown', onKey);
+            lastFocused?.focus();
+        }
+    };
+}
+
+// rAF 트윈 헬퍼
+function rafTween({from=0,to=1,duration=220,ease=(t)=>t,onUpdate,onComplete}){
+    const start = performance.now();
+    function frame(now){
+        const t = Math.min(1, (now-start)/duration);
+        const v = from + (to-from)*ease(t);
+        onUpdate?.(v);
+        if(t<1) requestAnimationFrame(frame);
+        else onComplete?.();
+    }
+    requestAnimationFrame(frame);
+}
+const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+
+// ===== 개선된 API 클라이언트 =====
+const ApiClient = {
+    getToken() {
+        return localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+    },
+
+    getRefreshToken() {
+        return localStorage.getItem('refreshToken') || sessionStorage.getItem('refreshToken');
+    },
+
+    async fetchWithAuth(url, options = {}) {
+        const token = this.getToken();
+        const headers = {
+            'Content-Type': 'application/json',
+            ...options.headers
+        };
+
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        try {
+            const response = await fetch(url, { ...options, headers });
+
+            // 토큰 만료 시 자동 갱신 시도
+            if (response.status === 401 && token) {
+                const refreshed = await this.refreshAccessToken();
+                if (refreshed) {
+                    headers['Authorization'] = `Bearer ${this.getToken()}`;
+                    return fetch(url, { ...options, headers });
+                } else {
+                    AuthManager.logout();
+                    throw new Error('인증이 만료되었습니다. 다시 로그인해주세요.');
+                }
+            }
+
+            return response;
+        } catch (error) {
+            console.error('API 요청 오류:', error);
+            throw error;
+        }
+    },
+
+    async refreshAccessToken() {
+        const refreshToken = this.getRefreshToken();
+        if (!refreshToken) return false;
+
+        try {
+            const response = await fetch('/api/ausers/refresh', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ refreshToken })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const storage = localStorage.getItem('accessToken') ? localStorage : sessionStorage;
+                storage.setItem('accessToken', data.accessToken);
+                return true;
+            }
+        } catch (error) {
+            console.error('토큰 갱신 실패:', error);
+        }
+
+        return false;
+    }
+};
+
+// ===== 드로어 (우측) =====
+const Drawer = (()=>{
+    const root = $('#drawer');
+    const inner = $('.drawer-inner', root);
+    const overlay = $('#drawerOverlay');
+    const btnOpen = $('#hamburger');
+    const btnClose = $('#closeDrawer');
+    const trap = createFocusTrap(root);
+    let isOpen = false;
+
+    function a11y(){ root.setAttribute('aria-hidden', String(!isOpen)); btnOpen.setAttribute('aria-expanded', String(isOpen)); }
+
+    function show(){
+        if(isOpen) return;
+        isOpen = true; a11y();
+        root.style.display = 'block';
+        inner.style.transform = 'translateX(100%)';
+        overlay.style.opacity = '0';
+        trap.activate();
+        rafTween({
+            from:0, to:1, duration:220, ease:easeOutCubic,
+            onUpdate:v=>{
+                inner.style.transform = `translateX(${(100 - v*100)}%)`;
+                overlay.style.opacity = String(0.5*v);
+            }
+        });
+    }
+    function hide(){
+        if(!isOpen) return;
+        isOpen = false; a11y();
+        rafTween({
+            from:1, to:0, duration:200, ease:easeOutCubic,
+            onUpdate:v=>{
+                inner.style.transform = `translateX(${(100 - v*100)}%)`;
+                overlay.style.opacity = String(0.5*v);
+            },
+            onComplete:()=>{ root.style.display = 'none'; trap.deactivate(); }
+        });
+    }
+
+    btnOpen && btnOpen.addEventListener('click', ()=> isOpen?hide():show(), {passive:true});
+    btnClose.addEventListener('click', hide, {passive:true});
+    overlay.addEventListener('click', hide, {passive:true});
+
+    // 드로어 내부의 링크나 버튼 클릭 시 닫기
+    inner.addEventListener('click', (e)=>{
+        const el = e.target.closest('a,button');
+        if(!el) return;
+        if(el.id === 'closeDrawer') return; // 닫기 버튼은 이미 처리됨
+        hide();
+    }, {passive:true});
+
+    // 모든 메뉴 아이템 클릭 시 닫기
+    $$('.drawer-nav a').forEach(a=>a.addEventListener('click', hide, {passive:true}));
+
+    // ESC 키 지원
+    window.addEventListener('keydown', e=>{ if(e.key==='Escape' && isOpen) hide(); }, {passive:true});
+
+    return { show, hide };
+})();
+
+// ===== 라우터 (탭 & 드로어 링크) =====
+const Router = (()=>{
+    const defaultView = 'rumor';
+    const protectedViews = ['profile']; // 로그인이 필요한 페이지
+
+    function setActive(view){
+        // 보호된 페이지에 대한 인증 체크
+        if (protectedViews.includes(view) && !AuthManager.isAuthenticated()) {
+            alert('로그인이 필요한 페이지입니다.');
+            LoginModal.open();
+            return;
+        }
+
+        $$('.view').forEach(v=>v.classList.toggle('active', v.dataset.view===view));
+        $$('.tab').forEach(t=>t.classList.toggle('active', t.dataset.view===view));
+        $$('.drawer-nav a').forEach(a=>a.classList.toggle('active', a.dataset.view===view));
+        try{ window.scrollTo({top:0, behavior:'smooth'});}catch{ window.scrollTo(0,0); }
+    }
+
+    function viewFromHash(){
+        const h = (location.hash || '').replace(/^#/, '');
+        const valid = new Set(['home','disclosure','rumor','verify','profile','detail']);
+        return valid.has(h) ? h : defaultView;
+    }
+
+    function routeTo(view){
+        view = view || defaultView;
+
+        // 보호된 페이지에 대한 인증 체크
+        if (protectedViews.includes(view) && !AuthManager.isAuthenticated()) {
+            alert('로그인이 필요한 페이지입니다.');
+            LoginModal.open();
+            return;
+        }
+
+        // 해시 업데이트로 공유 가능하고 뒤로/앞으로 가기 지원
+        const nextHash = '#' + view;
+        if(location.hash !== nextHash){
+            location.hash = nextHash;
+        }
+        setActive(view);
+    }
+
+    // 클릭 핸들러 -> routeTo
+    $$('.tabbar .tab').forEach(tab=>tab.addEventListener('click', (e)=>{
+        e.preventDefault();
+        routeTo(tab.dataset.view);
+    }, {passive:false}));
+    $$('.drawer-nav a').forEach(a=>a.addEventListener('click', (e)=>{
+        e.preventDefault();
+        routeTo(a.dataset.view);
+    }, {passive:false}));
+    $$('[data-nav="#rumor"]').forEach(btn=>btn.addEventListener('click', ()=>routeTo('rumor'), {passive:true}));
+
+    // 뒤로/앞으로 가기 지원
+    window.addEventListener('hashchange', ()=>{
+        const view = viewFromHash();
+        if (protectedViews.includes(view) && !AuthManager.isAuthenticated()) {
+            alert('로그인이 필요한 페이지입니다.');
+            LoginModal.open();
+            history.replaceState(null, '', '#' + defaultView);
+            setActive(defaultView);
+        } else {
+            setActive(view);
+        }
+    }, {passive:true});
+
+    // 로드 시 초기 라우트
+    const initialView = viewFromHash();
+    if (protectedViews.includes(initialView) && !AuthManager.isAuthenticated()) {
+        setActive(defaultView);
+        history.replaceState(null, '', '#' + defaultView);
+    } else {
+        setActive(initialView);
+    }
+
+    return { setActive: routeTo, routeTo };
+})();
+
+// ===== 모달 컨트롤러 (제보/로그인) =====
+function modalController(dialog){
+    const card = dialog.querySelector('.modal-card');
+    const trap = createFocusTrap(dialog);
+    function open(){ dialog.showModal(); trap.activate(); }
+    function close(){ dialog.close(); trap.deactivate(); }
+    dialog.addEventListener('cancel', (e)=>{ e.preventDefault(); close(); });
+    // 배경 클릭으로 닫기 (크로스 브라우저)
+    dialog.addEventListener('click', (e)=>{
+        const rect = card.getBoundingClientRect();
+        const inside = e.clientX>=rect.left && e.clientX<=rect.right && e.clientY>=rect.top && e.clientY<=rect.bottom;
+        if(!inside) close();
+    });
+    return { open, close };
+}
+
+const SubmitModal = modalController($('#submitModal'));
+const LoginModal  = modalController($('#loginModal'));
+const DetailModal = modalController($('#detailModal'));
+
+// ===== 개선된 인증 관리 시스템 =====
+const AuthManager = {
+    // 토큰 저장 (로그인 상태 유지 옵션 반영)
+    setTokens(accessToken, refreshToken, keepLogin = false) {
+        const storage = keepLogin ? localStorage : sessionStorage;
+        storage.setItem('accessToken', accessToken);
+        if (refreshToken) {
+            storage.setItem('refreshToken', refreshToken);
+        }
+    },
+
+    // 사용자 정보 저장
+    setUserInfo(userInfo, keepLogin = false) {
+        const storage = keepLogin ? localStorage : sessionStorage;
+        storage.setItem('user', JSON.stringify({
+            ...userInfo,
+            loginTime: new Date().toISOString()
+        }));
+    },
+
+    // 토큰 조회
+    getToken() {
+        return localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+    },
+
+    // 사용자 정보 조회
+    getUserInfo() {
+        const userStr = localStorage.getItem('user') || sessionStorage.getItem('user');
+        return userStr ? JSON.parse(userStr) : null;
+    },
+
+    // 모든 토큰 및 사용자 정보 삭제
+    removeTokens() {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('refreshToken');
+        sessionStorage.removeItem('user');
+    },
+
+    // 로그인 상태 확인
+    isAuthenticated() {
+        return !!this.getToken();
+    },
+
+    // 로그아웃
+    logout() {
+        this.removeTokens();
+        this.updateUI();
+    },
+
+    // UI 업데이트
+    updateUI() {
+        const isAuth = this.isAuthenticated();
+        const loginBtn = document.getElementById('loginBtn');
+
+        if (loginBtn) {
+            if (isAuth) {
+                const user = this.getUserInfo();
+                loginBtn.textContent = user?.name || user?.email || '내정보';
+                loginBtn.onclick = () => {
+                    if (confirm('로그아웃 하시겠습니까?')) {
+                        this.logout();
+                        alert('로그아웃되었습니다.');
+                    }
+                };
+            } else {
+                loginBtn.textContent = '로그인';
+                loginBtn.onclick = () => LoginModal.open();
+            }
+        }
+    },
+
+    // 페이지 로드 시 로그인 상태 확인
+    checkLoginStatus() {
+        const token = this.getToken();
+        if (token) {
+            this.updateUI();
+        }
+    }
+};
+
+// 열기 & 닫기 훅
+$('#openSubmit').addEventListener('click', ()=>{
+    // 로그인이 필요한 기능 보호
+    if (!AuthManager.isAuthenticated()) {
+        alert('로그인이 필요한 서비스입니다.');
+        LoginModal.open();
+        return;
+    }
+    SubmitModal.open();
+}, {passive:true});
+
+$('#loginBtn').addEventListener('click', ()=>{
+    if (AuthManager.isAuthenticated()) {
+        AuthManager.logout();
+        alert('로그아웃되었습니다.');
+    } else {
+        LoginModal.open();
+    }
+}, {passive:true});
+
+$('.modal-close', $('#loginModal')).addEventListener('click', ()=>LoginModal.close(), {passive:true});
+
+// 페이지 로드 시 인증 상태 확인 및 UI 업데이트
+document.addEventListener('DOMContentLoaded', () => {
+    AuthManager.checkLoginStatus();
+});
+
+// ===== API 통신 관련 유틸리티 =====
+const API = {
+    BASE_URL: '/api',
+
+    async request(endpoint, options = {}) {
+        const url = `${this.BASE_URL}${endpoint}`;
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            },
+            ...options
+        };
+
+        // JWT 토큰이 있으면 Authorization 헤더 추가
+        const token = AuthManager.getToken();
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+
+        try {
+            const response = await fetch(url, config);
+
+            // 토큰 만료 처리
+            if (response.status === 401 && token) {
+                AuthManager.logout();
+                throw new Error('인증이 만료되었습니다. 다시 로그인해주세요.');
+            }
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || `HTTP ${response.status}`);
+            }
+
+            return data;
+        } catch (error) {
+            console.error('API 요청 오류:', error);
+            throw error;
+        }
+    },
+
+    // 회원가입
+    async signup(userData) {
+        return this.request('/ausers/regCreate', {
+            method: 'POST',
+            body: JSON.stringify(userData)
+        });
+    },
+
+    // 로그인
+    async login(credentials) {
+        return this.request('/ausers/openSession', {
+            method: 'POST',
+            body: JSON.stringify(credentials)
+        });
+    },
+
+    // 내 정보 조회
+    async getMyInfo() {
+        return this.request('/ausers/me');
+    }
+};
+
+// ===== 기능 연결 =====
+(function Features(){
+    $('#runCheck').addEventListener('click', ()=>{
+        $('#verifyText').value = $('#rumorInput').value;
+        Router.setActive('verify');
+    });
+    $$('#suggestChips .chip').forEach(ch=> ch.addEventListener('click', ()=>{ $('#verifyText').value = ch.textContent; }, {passive:true}));
+    $('#verifyBtn').addEventListener('click', ()=> alert('데모: 입력된 내용으로 검증을 시작합니다.'));
+    $('#loadMore').addEventListener('click', ()=>{
+        const list = $('.list');
+        const card = document.createElement('article');
+        card.className = 'rumor-card';
+        card.innerHTML = `
+      <div class="meta">
+        <span class="chip ghost">뉴스</span>
+        <span class="time">방금</span>
+      </div>
+      <h3 class="title">반도체 업계 합작 소식 루머</h3>
+      <div class="status">
+        <span class="badge warn"><span class="dot orange"></span> 추측성</span>
+        <span class="score">55%</span>
+        <a href="#" class="more">상세보기</a>
+      </div>`;
+        list.insertBefore(card, $('#loadMore'));
+    });
+
+    // 프로필 페이지에서 내 정보 로드
+    const profileView = $('#view-profile');
+    if (profileView) {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    if (profileView.classList.contains('active') && AuthManager.isAuthenticated()) {
+                        loadUserProfile();
+                    }
+                }
+            });
+        });
+        observer.observe(profileView, { attributes: true });
+    }
+
+    // 사용자 프로필 로드
+    async function loadUserProfile() {
+        try {
+            const userInfo = await API.getMyInfo();
+            updateProfileView(userInfo);
+        } catch (error) {
+            console.error('프로필 로드 실패:', error);
+            if (error.message.includes('401') || error.message.includes('인증')) {
+                AuthManager.logout();
+                alert('로그인이 필요합니다.');
+                Router.setActive('home');
+            }
+        }
+    }
+
+    // 프로필 뷰 업데이트
+    function updateProfileView(userInfo) {
+        const profileView = $('#view-profile');
+        if (profileView && userInfo) {
+            profileView.innerHTML = `
+                <div class="section">
+                    <div class="panel">
+                        <div class="panel-head">
+                            <h2 class="panel-title">내 프로필</h2>
+                        </div>
+                        <div class="profile-info">
+                            <div class="field">
+                                <label class="label">이름</label>
+                                <div class="info-value">${userInfo.name || '-'}</div>
+                            </div>
+                            <div class="field">
+                                <label class="label">이메일</label>
+                                <div class="info-value">${userInfo.email || '-'}</div>
+                            </div>
+                            <div class="field">
+                                <label class="label">역할</label>
+                                <div class="info-value">${userInfo.role === 'ADMIN' ? '관리자' : '사용자'}</div>
+                            </div>
+                            <div class="field">
+                                <label class="label">가입일</label>
+                                <div class="info-value">${userInfo.createdAt ? new Date(userInfo.createdAt).toLocaleDateString() : '-'}</div>
+                            </div>
+                        </div>
+                        <button class="cta" id="logoutBtn">로그아웃</button>
+                    </div>
+                </div>
+            `;
+
+            // 로그아웃 버튼 이벤트 추가
+            const logoutBtn = $('#logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    AuthManager.logout();
+                    alert('로그아웃되었습니다.');
+                    Router.setActive('home');
+                });
+            }
+        }
+    }
+})();
+
+// ===== 전역 ESC: 드로어 또는 열린 다이얼로그 닫기 =====
+window.addEventListener('keydown', (e)=>{
+    if(e.key !== 'Escape') return;
+    if($('#drawer').style.display==='block'){ // 드로어 열림
+        Drawer.hide(); return;
+    }
+    document.querySelectorAll('dialog[open]').forEach(d=>d.close());
+}, {passive:true});
+
+// --- '상세보기' 링크 열기 -> 상세 뷰
+// --- 로그인/가입 세그먼트 탭으로 회원가입 스크린샷 토글
+(function signupShotToggle(){
+    const shot = document.getElementById('signupShot');
+    const tabLogin = document.getElementById('tabLogin');
+    const tabJoin = document.getElementById('tabJoin');
+    function showJoin(){ if(shot) shot.hidden = false; } // 코드 생성 유지
+    function showLogin(){ if(shot) shot.hidden = true; }
+    if(tabJoin){ tabJoin.addEventListener('click', ()=>{ if(shot) shot.hidden = false; }, {passive:true}); }
+    if(tabLogin){ tabLogin.addEventListener('click', ()=>{ if(shot) shot.hidden = true; }, {passive:true}); }
+})();
+
+// ===== 통합 로그인/회원가입 로직 (완전 개선) =====
+(function Auth(){
+
+    function movePrimaryToBottom(){
+        var btn = document.getElementById('primaryAction');
+        if(!btn) return;
+        // loginFields/signupBox를 담고 있는 공통 컨테이너 우선
+        var box = document.getElementById('signupBox') || document.getElementById('loginFields');
+        // 모달 콘텐츠 영역으로 폴백
+        var container = (box && box.parentNode) || document.querySelector('#loginModal .panel') || document.getElementById('loginModal');
+        if(container){
+            container.appendChild(btn);
+        }
+    }
+
+    function movePrimaryAfterTerms(){
+        var btn   = document.getElementById('primaryAction');
+        var agree = document.getElementById('signupAgree');
+        if(!btn || !agree || !agree.parentNode) return;
+        agree.parentNode.insertBefore(btn, agree.nextSibling);
+    }
+
+    function moveSignupTermsUnderSuPw2(){
+        var agree = document.getElementById('signupAgree');
+        var suPw2 = document.getElementById('suPw2');
+        if(!agree || !suPw2) return;
+        if(suPw2.parentNode && agree.parentNode !== suPw2.parentNode){
+            suPw2.parentNode.insertBefore(agree, suPw2.nextSibling);
+        }else if(suPw2.parentNode){
+            // 순서 보장: suPw2 -> signupAgree
+            if(agree.previousElementSibling !== suPw2){
+                suPw2.parentNode.insertBefore(agree, suPw2.nextSibling);
+            }
+        }
+    }
+
+    function movePrimaryButton(isLogin){
+        var btn = document.getElementById('primaryAction');
+        if(!btn) return;
+        if(isLogin){
+            // loginRow가 있으면 그 다음에, 없으면 loginFields 다음에 배치
+            var after = document.getElementById('loginRow') || document.getElementById('loginFields');
+            if(after && after.parentNode){
+                after.parentNode.insertBefore(btn, after.nextSibling);
+            }
+        }else{
+            // '비밀번호 확인' (suPw2) 바로 아래에 배치
+            var suPw2 = document.getElementById('suPw2');
+            if(suPw2 && suPw2.parentNode){
+                suPw2.parentNode.insertBefore(btn, suPw2.nextSibling);
+            }
+        }
+    }
+
+    const tabLogin = document.getElementById('tabLogin');
+    const tabJoin  = document.getElementById('tabJoin');
+    const loginFields = document.getElementById('loginFields');
+    const loginRow    = document.getElementById('loginRow');
+    const signupBox   = document.getElementById('signupBox');
+    const signupAgree = document.getElementById('signupAgree');
+    const suAgree     = document.getElementById('suAgree');
+    const primaryBtn  = document.getElementById('primaryAction');
+
+    let mode = 'login'; // 또는 'regCreate'
+
+    function setMode(next){
+        mode = next;
+        const isLogin = mode === 'login';
+        if(loginFields) loginFields.hidden = !isLogin;
+        if(loginRow)    loginRow.hidden    = !isLogin;
+        if(signupBox)   signupBox.hidden   =  isLogin;
+        if(signupAgree) signupAgree.hidden =  isLogin;
+        primaryBtn.textContent = isLogin ? '로그인' : '회원가입';
+        if(!isLogin){ moveSignupTermsUnderSuPw2(); movePrimaryToBottom(); }
+        if(isLogin){ movePrimaryButton(true); } else { movePrimaryToBottom(); }
+        tabLogin?.classList.toggle('active', isLogin);
+        tabJoin?.classList.toggle('active', !isLogin);
+        // 회원가입에서 약관 체크 전까지 메인 버튼 비활성화
+        primaryBtn.disabled = (!isLogin && !(suAgree && suAgree.checked));
+    }
+
+    tabLogin?.addEventListener('click', ()=>setMode('login'), {passive:true});
+    tabJoin?.addEventListener('click',  ()=>setMode('regCreate'), {passive:true});
+    suAgree?.addEventListener('change', ()=>{ if(mode==='regCreate') primaryBtn.disabled = !suAgree.checked; });
+
+    // 기본값
+    setMode('login');
+
+    // ===== 실제 API 연결 로직 (완전 교체) =====
+    primaryBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        primaryBtn.disabled = true;
+        primaryBtn.textContent = mode === 'login' ? '로그인 중...' : '가입 중...';
+
+        try {
+            if (mode === 'login') {
+                await handleLogin();
+            } else {
+                await handleSignup();
+            }
+        } catch (error) {
+            console.error('인증 오류:', error);
+            alert(error.message || '처리 중 오류가 발생했습니다.');
+        } finally {
+            primaryBtn.disabled = false;
+            primaryBtn.textContent = mode === 'login' ? '로그인' : '회원가입';
+        }
+    });
+
+    // 실제 로그인 처리
+    async function handleLogin() {
+        const email = document.getElementById('loginEmail')?.value.trim();
+        const password = document.getElementById('loginPw')?.value.trim();
+        const keepLogin = document.getElementById('keepLogin')?.checked;
+
+        if (!email || !password) {
+            throw new Error('이메일과 비밀번호를 입력해주세요.');
+        }
+
+        try {
+            const response = await API.login({ email, password });
+
+            // 토큰 저장 (로그인 상태 유지 옵션 반영)
+            AuthManager.setTokens(response.accessToken, response.refreshToken, keepLogin);
+
+            // 사용자 정보 저장
+            AuthManager.setUserInfo({ email }, keepLogin);
+
+            AuthManager.updateUI();
+
+            // 모달 닫기
+            LoginModal.close();
+
+            // 성공 메시지
+            alert('로그인되었습니다!');
+
+            // 폼 초기화
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPw').value = '';
+
+        } catch (error) {
+            throw new Error(error.message || '로그인에 실패했습니다.');
+        }
+    }
+
+    // 실제 회원가입 처리
+    async function handleSignup() {
+        const name = document.getElementById('suName')?.value.trim();
+        const email = document.getElementById('suEmail')?.value.trim();
+        const password = document.getElementById('suPw')?.value;
+        const passwordConfirm = document.getElementById('suPw2')?.value;
+        const agreed = document.getElementById('suAgree')?.checked;
+
+        // 유효성 검증
+        if (!name || !email || !password || !passwordConfirm) {
+            throw new Error('모든 항목을 입력해주세요.');
+        }
+
+        if (password.length < 8) {
+            throw new Error('비밀번호는 8자 이상이어야 합니다.');
+        }
+
+        if (password !== passwordConfirm) {
+            throw new Error('비밀번호가 일치하지 않습니다.');
+        }
+
+        if (!agreed) {
+            throw new Error('약관에 동의해 주세요.');
+        }
+
+        try {
+            // 회원가입 API 호출
+            const response = await API.signup({
+                name,
+                email,
+                password,
+                passwordConfirm
+            });
+
+            // 회원가입 성공 시 자동 로그인 (토큰 저장)
+            AuthManager.setTokens(response.accessToken, response.refreshToken, false);
+
+            // 사용자 정보 저장
+            AuthManager.setUserInfo({ name, email }, false);
+
+            AuthManager.updateUI();
+
+            // 모달 닫기
+            LoginModal.close();
+
+            // 성공 메시지
+            alert('회원가입이 완료되었습니다!');
+
+            // 폼 초기화
+            document.getElementById('suName').value = '';
+            document.getElementById('suEmail').value = '';
+            document.getElementById('suPw').value = '';
+            document.getElementById('suPw2').value = '';
+            document.getElementById('suAgree').checked = false;
+
+            // 로그인 모드로 전환
+            setMode('login');
+
+        } catch (error) {
+            throw new Error(error.message || '회원가입에 실패했습니다.');
+        }
+    }
+})();
+
+// '비밀번호 찾기' 링크 데모 처리
+document.getElementById('findPw')?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    alert('데모: 비밀번호 찾기 플로우로 이동합니다.');
+});
+
+/* ===== alert() 재정의 -> 브라운 알림 다이얼로그 (v4) ===== */
+(function(){
+    function ensureNoticeDialog(){
+        var dlg = document.getElementById('noticeDialog');
+        if(!dlg){
+            dlg = document.createElement('dialog');
+            dlg.id = 'noticeDialog';
+            dlg.className = 'modal';
+            dlg.setAttribute('aria-labelledby', 'noticeTitle');
+            dlg.innerHTML = ''
+                + '<form method="dialog" class="modal-card" style="position:relative">'
+                + '  <button type="submit" value="close" class="icon-btn modal-close" aria-label="닫기">✖</button>'
+                + '  <div class="modal-head"><h2 id="noticeTitle">알림</h2></div>'
+                + '  <p id="noticeMsg" style="margin:8px 0 4px;"></p>'
+                + '  <div class="modal-actions"><button value="ok" class="cta small" autofocus>확인</button></div>'
+                + '</form>';
+            document.body.appendChild(dlg);
+            var card = dlg.querySelector('.modal-card');
+            dlg.addEventListener('click', function(e){
+                var r = card.getBoundingClientRect();
+                var inside = e.clientX>=r.left && e.clientX<=r.right && e.clientY>=r.top && e.clientY<=r.bottom;
+                if(!inside) dlg.close();
+            });
+        }
+        return dlg;
+    }
+    var nativeAlert = window.alert.bind(window);
+    window.alert = function(message){
+        try{
+            var dlg = ensureNoticeDialog();
+            var p = dlg.querySelector('#noticeMsg');
+            if(p) p.textContent = (message==null ? '' : String(message));
+            dlg.showModal();
+        }catch(err){
+            nativeAlert(message);
+        }
+    };
+})();
+
+/* === submitModal 닫기 'X' 수정 === */
+(function submitModalCloseFix(){
+    try{
+        var btn = document.querySelector('#submitModal .modal-head .icon-btn');
+        var dlg = document.getElementById('submitModal');
+        if(btn && dlg){
+            btn.addEventListener('click', function(e){ e.preventDefault(); dlg.close(); }, {passive:true});
+        }
+    }catch(e){}
+})();
+
+/* v11: 모든 textarea 자동 확장 + 제보 모달 제출/취소 동작 */
+(function autoGrowTextareas(){
+    function fit(ta){
+        if(!ta) return;
+        ta.style.height = 'auto';
+        ta.style.height = ta.scrollHeight + 'px';
+    }
+    function bind(ta){
+        fit(ta);
+        ta.addEventListener('input', function(){ fit(ta); }, {passive:true});
+    }
+    document.querySelectorAll('textarea').forEach(bind);
+    // 동적으로 추가된 textarea도 관찰
+    const obs = new MutationObserver((muts)=>{
+        muts.forEach(m=>{
+            m.addedNodes && m.addedNodes.forEach(n=>{
+                if(n.nodeType===1){
+                    if(n.tagName==='TEXTAREA') bind(n);
+                    n.querySelectorAll && n.querySelectorAll('textarea').forEach(bind);
+                }
+            });
+        });
+    });
+    obs.observe(document.documentElement, { childList:true, subtree:true });
+})();
+
+(function submitModalBehaviorsV11(){
+    const dlg  = document.getElementById('submitModal');
+    const form = document.getElementById('submitForm');
+    if(!dlg || !form) return;
+    const btnSubmit = form.querySelector('button[value="submit"]');
+    const btnCancel = form.querySelector('button[value="cancel"]');
+
+    function resetForm(){
+        form.querySelectorAll('input, textarea').forEach(el=>{ el.value = ''; });
+    }
+    function esc(s){
+        return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    btnSubmit && btnSubmit.addEventListener('click', function(e){
+        e.preventDefault();
+        const content = form.querySelector('textarea')?.value.trim();
+        if(!content){ alert('제보 내용을 입력해주세요.'); return; }
+        const company = form.querySelector('input[placeholder="기업명을 입력하세요"]')?.value.trim();
+        const list = document.querySelector('.list');
+        if(list){
+            const title = esc((company? (company+' - ') : '') + content.split('\n')[0]).slice(0, 80);
+            const card = document.createElement('article');
+            card.className = 'rumor-card';
+            card.innerHTML = `
+        <div class="meta">
+          <span class="chip ghost">${company ? esc(company) : '제보'}</span>
+          <span class="time">방금</span>
+        </div>
+        <h3 class="title">${title}</h3>
+        <div class="status">
+          <span class="badge warn"><span class="dot orange"></span> 제보</span>
+          <span class="score">-</span>
+          <a href="#" class="more">상세보기</a>
+        </div>`;
+            const moreBtn = document.getElementById('loadMore');
+            list.insertBefore(card, moreBtn ? moreBtn : null);
+        }
+        resetForm();
+        try{ dlg.close(); }catch(_){}
+        alert('제보가 등록되었습니다. 감사합니다.');
+    }, {passive:false});
+
+    btnCancel && btnCancel.addEventListener('click', function(e){
+        e.preventDefault();
+        resetForm();
+        try{ dlg.close(); }catch(_){}
+    }, {passive:false});
+})();
+
+// === 상세 모달 동작 ===
+function bindDetailVote(){
+    var g = document.getElementById('voteGood');
+    var b = document.getElementById('voteBad');
+    if(g){ g.addEventListener('click', function(e){ e.preventDefault(); alert('피드백 감사합니다!'); }, {once:true}); }
+    if(b){ b.addEventListener('click', function(e){ e.preventDefault(); alert('더 개선하겠습니다. 소중한 의견 고맙습니다.'); }, {once:true}); }
+}
+(function bindWhenOpen(){
+    const dlg = document.getElementById('detailModal');
+    if(!dlg) return;
+    const nativeShow = dlg.showModal?.bind(dlg);
+    if(nativeShow){
+        dlg.showModal = function(){ nativeShow(); setTimeout(bindDetailVote, 0); };
+    }else{
+        bindDetailVote();
+    }
+})();
+
+// 상세 모달 컨트롤러 + '상세보기'에서 열기
+(function(){
+    const detailDlg = document.getElementById('detailModal');
+    if(!detailDlg) return;
+    const DetailModal = modalController(detailDlg);
+    document.addEventListener('click', function(e){
+        const a = e.target.closest('a.more');
+        if(!a) return;
+        e.preventDefault();
+        DetailModal.open();
+    }, {passive:false});
+
+    // 데모 액션
+    function bind(id, msg){
+        const el = document.getElementById(id);
+        if(el) el.addEventListener('click', function(ev){ ev.preventDefault(); alert(msg); }, {passive:false});
+    }
+    bind('shareBtn','공유 기능은 데모입니다.');
+    bind('reportBtn','신고가 접수되었습니다(데모).');
+    const vg = document.getElementById('voteGood');
+    const vb = document.getElementById('voteBad');
+    vg && vg.addEventListener('click', (e)=>{ e.preventDefault(); alert('피드백 감사합니다!'); }, {passive:false});
+    vb && vb.addEventListener('click', (e)=>{ e.preventDefault(); alert('더 개선하겠습니다.'); }, {passive:false});
+})();
+
+// === 상세 모달 연결 (레이아웃 안전) ===
+(function setupDetailModal(){
+    var dlg = document.getElementById('detailModal');
+    if(!dlg) return;
+    var DetailModal = modalController(dlg);
+    document.addEventListener('click', function(e){
+        var a = e.target.closest('a.more');
+        if(!a) return;
+        // 라우터 핸들러 이전에 가로채기
+        e.preventDefault();
+        e.stopPropagation();
+        if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+        DetailModal.open();
+    }, {capture:true});
+    function bind(id, msg){
+        var el = document.getElementById(id);
+        if(el) el.addEventListener('click', function(ev){ ev.preventDefault(); alert(msg); }, {passive:false});
+    }
+    bind('shareBtn','공유 기능은 데모입니다.');
+    bind('reportBtn','신고가 접수되었습니다(데모).');
+    bind('voteGood','피드백 감사합니다!');
+    bind('voteBad','더 개선하겠습니다.');
+})();
+
+/* v16: 상세 공유/신고 버튼 */
+(function detailActions(){
+    var share = document.getElementById('shareBtn');
+    var report = document.getElementById('reportBtn');
+    function currentURL(){ try { return location.href; } catch(e){ return ''; } }
+    share && share.addEventListener('click', function(){
+        var url = currentURL();
+        if(navigator.share){
+            navigator.share({ title: document.title, url }).catch(function(){});
+        }else if(navigator.clipboard && url){
+            navigator.clipboard.writeText(url).then(function(){ alert('링크가 복사되었습니다.'); }).catch(function(){ alert('링크: ' + url); });
+        }else{
+            alert('링크: ' + url);
+        }
+    }, {passive:true});
+    report && report.addEventListener('click', function(){
+        alert('신고가 접수되었습니다. 감사합니다.');
+    }, {passive:true});
+})();
