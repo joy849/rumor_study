@@ -192,10 +192,6 @@ server:
 - **브라우저 캐시**: 정적 리소스 변경 시 하드 리프레시 필요 (`Ctrl+Shift+R`)
 - **서버 재시작**: JS 파일 수정 후 Spring Boot 서버 재시작 필요
 
-## 📄 라이선스
-
-이 프로젝트는 교육 목적으로 작성되었습니다.
-
 ## 👥 기여자
 
 - Backend & Frontend Architecture
