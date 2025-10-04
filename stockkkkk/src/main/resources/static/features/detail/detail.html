@@ -1,0 +1,27 @@
+<div class="section">
+    <div class="panel">
+        <div class="panel-head between">
+            <div class="cluster">
+                <button aria-label="뒤로 가기" class="icon-btn" data-nav="#rumor">
+                    <svg height="22" viewbox="0 0 24 24" width="22"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path></svg>
+                </button>
+                <h2 class="panel-title">루머 상세 정보 (샘플)</h2>
+            </div>
+        </div>
+        <div class="detail-form">
+            <label class="label">루머 제목</label>
+            <input class="input" id="detailTitle" placeholder="루머 제목을 입력하세요"/>
+            <label class="label mt">상세 내용</label>
+            <textarea class="input" id="detailText" placeholder="루머에 대한 상세 설명을 적어주세요." rows="5"></textarea>
+            <label class="label mt">관련 링크 (선택)</label>
+            <input class="input" id="detailUrl" placeholder="https://example.com" type="url"/>
+        </div>
+
+        <!-- 공유/신고 액션 -->
+        <div class="action-row" role="group" aria-label="공유 및 신고">
+            <button type="button" class="action-btn share">공유하기</button>
+            <button type="button" class="action-btn report">신고하기</button>
+        </div>
+
+    </div>
+</div>

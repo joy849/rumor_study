@@ -1,0 +1,53 @@
+<div class="section">
+    <div class="panel">
+        <div class="panel-head between">
+            <div class="cluster"><h2 class="panel-title">루머 체크</h2>
+            </div><div class="cluster"><div class="trust-legend">
+            <span class="dot green"></span> 높음
+            <span class="dot orange"></span> 보통
+            <span class="dot red"></span> 낮음
+        </div> <button class="plus-btn" id="openSubmit">+ 루머 제보</button></div></div>
+        <div class="field">
+            <textarea class="input" id="rumorInput" placeholder="검증하고 싶은 루머나 정보를 입력해주세요..." rows="3"></textarea>
+        </div>
+        <div class="field">
+            <button class="cta" id="runCheck">
+                <svg aria-hidden="true" height="18" viewbox="0 0 24 24" width="18">
+                    <path d="M10.5 18a7.5 7.5 0 1 1 5.3-2.2l3.9 3.9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+                </svg>
+                루머 검증하기
+            </button>
+        </div>
+    </div>
+</div>
+<div class="list">
+    <article class="rumor-card">
+        <div class="meta">
+            <span class="chip ghost">SNS</span>
+            <span class="time">1시간 전</span>
+        </div>
+        <h3 class="title">애플이 삼성전자와 차세대 칩 공급계약 체결 예정</h3>
+        <div class="status">
+<span class="badge warn">
+<span class="dot orange"></span> 추측성
+      </span>
+            <span class="score">65%</span>
+            <a class="more" href="#">상세보기</a>
+        </div>
+    </article>
+    <article class="rumor-card">
+        <div class="meta">
+            <span class="chip ghost">커뮤니티</span>
+            <span class="time">3시간 전</span>
+        </div>
+        <h3 class="title">현대차 전기차 배터리 파트너십 변경 루머</h3>
+        <div class="status">
+<span class="badge danger">
+<span class="dot red"></span> 추정됨
+      </span>
+            <span class="score low">15%</span>
+            <a class="more" href="#">상세보기</a>
+        </div>
+    </article>
+    <button class="more-cta" id="loadMore">더 많은 루머 보기</button>
+</div>

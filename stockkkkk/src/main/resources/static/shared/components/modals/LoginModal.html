@@ -1,0 +1,50 @@
+<dialog aria-labelledby="loginTitle" class="modal" id="loginModal">
+    <form class="modal-card login-card" id="loginForm" method="dialog">
+        <button aria-label="닫기" class="icon-btn modal-close" value="close">
+            <svg height="22" viewbox="0 0 24 24" width="22"><path d="M6 6l12 12M6 18L18 6" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path></svg>
+        </button>
+        <div class="login-icon">📋</div>
+        <h2 class="login-title" id="loginTitle">실시간 공시 &amp; 루머 체크</h2>
+        <p class="login-sub">신뢰할 수 있는 금융 정보 서비스</p>
+        <div aria-label="로그인/회원가입 선택" class="segmented" role="tablist">
+            <button aria-selected="true" class="seg active" id="tabLogin" role="tab" type="button">로그인</button>
+            <button aria-selected="false" class="seg" id="tabJoin" role="tab" type="button">회원가입</button>
+        </div>
+        <div id="loginFields">
+            <label class="label">이메일</label>
+            <div class="input-wrap">
+                <span class="input-ico">✉️</span>
+                <input class="input" id="loginEmail" placeholder="example@email.com" required="" type="email"/>
+            </div>
+            <label class="label">비밀번호</label>
+            <div class="input-wrap">
+                <span class="input-ico">🔒</span>
+                <input class="input" id="loginPw" placeholder="•••••••" required="" type="password"/>
+                <button aria-label="비밀번호 보기" class="input-affix" id="togglePw" type="button">👁️</button>
+            </div>
+        </div>
+        <!-- RegCreate terms agreement (regCreate mode only) -->
+        <div class="agree-row" hidden="" id="signupAgree">
+            <label class="chk"><input id="suAgree" type="checkbox"/> 이용약관 및 개인정보처리방침에 동의합니다.</label>
+        </div>
+        <div class="login-row" id="loginRow">
+            <label class="chk"><input id="keepLogin" type="checkbox"/> 로그인 상태 유지</label>
+            <a class="link" href="#" id="findPw">비밀번호 찾기</a>
+        </div>
+        <button class="cta" id="primaryAction">로그인</button>
+        <!--loginFields-->
+        <!-- RegCreate compact box -->
+        <div class="regCreate-box" hidden="" id="signupBox">
+            <div class="box">
+                <label class="label">이름</label>
+                <input class="input" id="suName" placeholder="홍길동" type="text"/>
+                <label class="label">이메일</label>
+                <input class="input" id="suEmail" placeholder="example@email.com" type="email"/>
+                <label class="label">비밀번호</label>
+                <input class="input" id="suPw" placeholder="8자 이상 입력하세요" type="password"/>
+                <label class="label">비밀번호 확인</label>
+                <input class="input" id="suPw2" placeholder="비밀번호를 다시 입력하세요" type="password"/>
+            </div>
+        </div>
+    </form>
+</dialog>

@@ -33,20 +33,34 @@ spring:
   devtools:
     restart:
       enabled: true
+      additional-paths: src/main/resources/static
     livereload:
       enabled: true
+
+  # 웹 리소스 설정
+  web:
+    resources:
+      static-locations:
+        - file:src/main/resources/static/
+        - classpath:/static/
+      cache:
+        cachecontrol:
+          max-age: 0
+          no-cache: true
+          no-store: true
 
 # 로깅 설정
 logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    com.example.stock5: DEBUG
+    com.example.stockkkkk: DEBUG
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
 
 # 서버 설정
 server:
+  address: 0.0.0.0  # 모든 IP에서 접속 가능
   port: 8080
   servlet:
     context-path: /
@@ -73,7 +87,7 @@ springdoc:
   show-actuator: false
   paths-to-match:
     - /api/**
-  packages-to-scan: com.example.stock5
+  packages-to-scan: com.example.stockkkkk
 
 ---
 # 프로파일별 설정 (개발환경)
@@ -117,7 +131,7 @@ spring:
 logging:
   level:
     org.hibernate.SQL: WARN
-    com.example.stock5: INFO
+    com.example.stockkkkk: INFO
 
 # 운영환경에서는 Swagger UI 비활성화 (보안상 이유)
 springdoc:

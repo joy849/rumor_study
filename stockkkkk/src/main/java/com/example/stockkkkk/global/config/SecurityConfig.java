@@ -36,8 +36,8 @@ public class SecurityConfig {
                         // 공개 API 경로
                         .requestMatchers("/", "/api/auth/**", "/api/ausers/regCreate", "/api/ausers/openSession").permitAll()
 
-                        // 정적 리소스 허용
-                        .requestMatchers("/assets/**", "/static/**", "/*.html", "/*.css", "/*.js").permitAll()
+                        // 정적 리소스 허용 (모든 static 폴더 하위 리소스)
+                        .requestMatchers("/assets/**", "/features/**", "/shared/**", "/*.html", "/*.css", "/*.js").permitAll()
 
                         // Swagger/OpenAPI 관련 경로 허용
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**",
