@@ -15,7 +15,7 @@
         <div class="left cluster">
             <span class="brand">
                 <span class="brand-icon">🛡️</span>
-                <span>실시간 공시 &amp; 루머 체크</span>
+                <span>FinGuard 핀가드</span>
             </span>
         </div>
         <div class="right cluster">
@@ -25,7 +25,7 @@
             </button>
         </div>
     </header>
-    
+
     <!-- Drawer (left, sliding) -->
     <aside aria-hidden="true" aria-modal="true" class="drawer" id="drawer">
         <div aria-label="내비게이션" class="drawer-inner" role="dialog">
@@ -44,154 +44,16 @@
         </div>
         <div class="overlay" id="drawerOverlay" tabindex="-1"></div>
     </aside>
-    
+
     <!-- Views -->
     <main class="view-stack">
-        <!-- Rumor Check -->
-        <section aria-label="루머 체크" class="view active" data-view="rumor" id="view-rumor" role="region">
-            <div class="section">
-                <div class="panel">
-                    <div class="panel-head between">
-                        <div class="cluster"><h2 class="panel-title">루머 체크</h2>
-                        </div><div class="cluster"><div class="trust-legend">
-                        <span class="dot green"></span> 높음
-                        <span class="dot orange"></span> 보통
-                        <span class="dot red"></span> 낮음
-                    </div> <button class="plus-btn" id="openSubmit">+ 루머 제보</button></div></div>
-                    <div class="field">
-                        <textarea class="input" id="rumorInput" placeholder="검증하고 싶은 루머나 정보를 입력해주세요..." rows="3"></textarea>
-                    </div>
-                    <div class="field">
-                        <button class="cta" id="runCheck">
-                            <svg aria-hidden="true" height="18" viewbox="0 0 24 24" width="18">
-                                <path d="M10.5 18a7.5 7.5 0 1 1 5.3-2.2l3.9 3.9" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
-                            </svg>
-                            루머 검증하기
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="list">
-                <article class="rumor-card">
-                    <div class="meta">
-                        <span class="chip ghost">SNS</span>
-                        <span class="time">1시간 전</span>
-                    </div>
-                    <h3 class="title">애플이 삼성전자와 차세대 칩 공급계약 체결 예정</h3>
-                    <div class="status">
-<span class="badge warn">
-<span class="dot orange"></span> 추측성
-              </span>
-                        <span class="score">65%</span>
-                        <a class="more" href="#">상세보기</a>
-                    </div>
-                </article>
-                <article class="rumor-card">
-                    <div class="meta">
-                        <span class="chip ghost">커뮤니티</span>
-                        <span class="time">3시간 전</span>
-                    </div>
-                    <h3 class="title">현대차 전기차 배터리 파트너십 변경 루머</h3>
-                    <div class="status">
-<span class="badge danger">
-<span class="dot red"></span> 추정됨
-              </span>
-                        <span class="score low">15%</span>
-                        <a class="more" href="#">상세보기</a>
-                    </div>
-                </article>
-                <button class="more-cta" id="loadMore">더 많은 루머 보기</button>
-            </div>
-        </section>
-        <!-- Verify Page -->
-        <section aria-label="루머 검증" class="view" data-view="verify" id="view-verify" role="region">
-            <div class="section">
-                <div class="panel">
-                    <div class="panel-head between">
-                        <div class="cluster">
-                            <button aria-label="뒤로 가기" class="icon-btn" data-nav="#rumor">
-                                <svg height="22" viewbox="0 0 24 24" width="22"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path></svg>
-                            </button>
-                            <h2 class="panel-title">루머 검증</h2>
-                        </div>
-                    </div>
-                    <div class="guide">
-                        <h3>신뢰도 가이드</h3>
-                        <ul class="legend">
-                            <li><span class="dot green"></span> 높음 - 공식 공시/보도 확인됨</li>
-                            <li><span class="dot orange"></span> 보통 - 부족한 근거 있음</li>
-                            <li><span class="dot red"></span> 낮음 - 근거 없음/허위정보</li>
-                        </ul>
-                    </div>
-                    <label class="label">검증하고 싶은 루머나 정보를 입력해주세요</label>
-                    <textarea class="input" id="verifyText" placeholder="예: 애플이 삼성전자와 차세대 칩 공급계약을 체결했다는 소식이 있는데 사실인가요?" rows="4"></textarea>
-                    <label class="label mt">관련 링크나 출처 (선택사항)</label>
-                    <input class="input" id="verifyUrl" placeholder="URL이나 출처를 입력해주세요" type="url"/>
-                    <button class="cta mt" id="verifyBtn">루머 검증하기</button>
-                </div>
-            </div>
-            <div class="section">
-                <div class="panel">
-                    <h3 class="panel-subtitle">추천 질문</h3>
-                    <div class="chips" id="suggestChips">
-                        <button class="chip">삼성전자 실적 공개 언제인가요?</button>
-                        <button class="chip">네이버 AI 투자 계획은?</button>
-                        <button class="chip">SK하이닉스 메모리 전망은?</button>
-                        <button class="chip">카카오 인수합병 소식 진짜인가요?</button>
-                        <button class="chip">테슬라 한국 진출 확정됐나요?</button>
-                    </div>
-                    <div class="tip">
-                        <h4>검증 팁</h4>
-                        <ul>
-                            <li>구체적인 정보일수록 정확한 검증이 가능합니다.</li>
-                            <li>기업명, 시기 및 수치 등 핵심정보를 포함해주세요.</li>
-                            <li>출처가 있다면 공개/제공해주시면 더욱 정확해집니다.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Placeholder views -->
-        <section aria-label="홈" class="view" data-view="home" id="view-home">
-        </section>
-        <section aria-label="공시" class="view" data-view="disclosure" id="view-disclosure">
-            <div class="placeholder"><p>공시 리스트가 이곳에 표시됩니다.</p></div>
-        </section>
-        <section aria-label="프로필" class="view" data-view="profile" id="view-profile">
-            <div class="placeholder"><p>프로필 설정 화면입니다.</p></div>
-        </section>
-        <!-- Detail Screenshot View -->
-        <section aria-label="루머 상세" class="view" data-view="detail" id="view-detail" role="region">
-            <div class="section">
-                <div class="panel">
-                    <div class="panel-head between">
-                        <div class="cluster">
-                            <button aria-label="뒤로 가기" class="icon-btn" data-nav="#rumor">
-                                <svg height="22" viewbox="0 0 24 24" width="22"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path></svg>
-                            </button>
-                            <h2 class="panel-title">루머 상세 정보 (샘플)</h2>
-                        </div>
-                    </div>
-                    <div class="detail-form">
-                        <label class="label">루머 제목</label>
-                        <input class="input" id="detailTitle" placeholder="루머 제목을 입력하세요"/>
-                        <label class="label mt">상세 내용</label>
-                        <textarea class="input" id="detailText" placeholder="루머에 대한 상세 설명을 적어주세요." rows="5"></textarea>
-                        <label class="label mt">관련 링크 (선택)</label>
-                        <input class="input" id="detailUrl" placeholder="https://example.com" type="url"/>
-                    </div>
-
-                    <!-- 공유/신고 액션 -->
-                    <div class="action-row" role="group" aria-label="공유 및 신고">
-                        <button type="button" class="action-btn share">공유하기</button>
-                        <button type="button" class="action-btn report">신고하기</button>
-                    </div>
-
-                </div>
-            </div>
-        </section>
+        <section aria-label="홈" class="view" data-view="home" id="view-home"></section>
+        <section aria-label="공시" class="view" data-view="disclosure" id="view-disclosure"></section>
+        <section aria-label="루머 체크" class="view active" data-view="rumor" id="view-rumor" role="region"></section>
+        <section aria-label="루머 상세" class="view" data-view="detail" id="view-detail" role="region"></section>
+        <section aria-label="프로필" class="view" data-view="profile" id="view-profile"></section>
     </main>
-    
+
     <!-- Tabbar -->
     <footer aria-label="하단 탭바" class="tabbar" role="navigation">
         <a class="tab" data-view="home" href="#home">
@@ -217,7 +79,10 @@
 <div id="modals-container"></div>
 
 <!-- Scripts -->
-<!-- 1. 공유 서비스 (전역 객체) -->
+<!-- 1. 알림 시스템 (alert 재정의) -->
+<script src="shared/components/modals/alert.js"></script>
+
+<!-- 2. 공유 서비스 (전역 객체) -->
 <script src="shared/services/api-client.js"></script>
 <script src="shared/services/auth-manager.js"></script>
 <script src="shared/services/modal-controller.js"></script>
@@ -234,99 +99,32 @@
 
 <!-- Load Modals -->
 <script>
-document.addEventListener('DOMContentLoaded', async function() {
-    const modalsContainer = document.getElementById('modals-container');
+    document.addEventListener('DOMContentLoaded', async function() {
+        const modalsContainer = document.getElementById('modals-container');
 
-    async function loadModal(url) {
-        const response = await fetch(url);
-        return await response.text();
-    }
+        async function loadModal(url) {
+            const response = await fetch(url);
+            return await response.text();
+        }
 
-    try {
-        const [submitModal, loginModal, detailModal] = await Promise.all([
-            loadModal('shared/components/modals/SubmitModal.html'),
-            loadModal('shared/components/modals/LoginModal.html'),
-            loadModal('shared/components/modals/DetailModal.html')
-        ]);
+        try {
+            const [submitModal, loginModal, detailModal] = await Promise.all([
+                loadModal('shared/components/modals/SubmitModal.html'),
+                loadModal('shared/components/modals/LoginModal.html'),
+                loadModal('shared/components/modals/DetailModal.html')
+            ]);
 
-            <h3 class="rd-title">패턴 분석 결론</h3>
-            <section class="rd-sec rd-conclusion">
-                <p class="muted">현재 루머는 과거 <strong>유사 패턴 62건</strong> 중 다수가 ‘부정’ 판정으로 종료되었습니다.
-                    출처 신뢰도와 공식 발표 부재를 고려할 때 <strong>사실일 가능성은 낮음</strong>으로 판단됩니다.</p>
-            </section>
-            <!-- ===== 추가 끝 ===== -->
-            <!-- 관련 링크 -->
-            <h3 class="rd-title">관련 링크</h3>
-            <section class="rd-sec rd-links">
-                <a class="rd-row link" href="#" rel="noopener" target="_blank">
-                    <div class="l">📄 삼성전자 최신 공시 보기</div>
-                    <div class="r ext">↗</div>
-                </a>
-                <a class="rd-row link" href="#" rel="noopener" target="_blank">
-                    <div class="l">🔍 관련 뉴스 검색하기</div>
-                    <div class="r ext">↗</div>
-                </a>
-                <a class="rd-row link" href="#" rel="noopener" target="_blank">
-                    <div class="l">📈 삼성전자 주가 차트 보기</div>
-                    <div class="r ext">↗</div>
-                </a>
-            </section>
-            <!-- 검증 히스토리 -->
-            <h3 class="rd-title">검증 히스토리</h3>
-            <section class="rd-sec rd-history">
-                <div class="rd-row">
-                    <div class="l">루머 접수</div>
-                    <div class="r"><span class="muted">3시간 전</span> <span aria-hidden="true" class="rot">⟳</span></div>
-                </div>
-                <div class="rd-row">
-                    <div class="l">DART 공시 확인</div>
-                    <div class="r"><span class="muted">2시간 전</span> <span aria-hidden="true" class="rot">⟳</span></div>
-                </div>
-                <div class="rd-row">
-                    <div class="l">언론 보도 확인</div>
-                    <div class="r"><span class="muted">1시간 전</span> <span aria-hidden="true" class="rot">⟳</span></div>
-                </div>
-                <div class="rd-row">
-                    <div class="l">검증 완료 (부정됨)</div>
-                    <div class="r"><span class="muted">방금 전</span> <span aria-hidden="true" class="rot">⟳</span></div>
-                </div>
-            </section>
-            <!-- 커뮤니티 의견 -->
-            <h3 class="rd-title">커뮤니티 의견</h3>
-            <section class="rd-sec rd-comments">
-                <article class="rd-comment">
-                    <header>
-                        <strong>투자고수</strong> <span class="muted">2시간 전</span>
-                    </header>
-                    <p>“이런 루머는 자주 나오는데 공식 발표 전까지는 믿지 않는 게 좋아요.”</p>
-                    <div class="rd-reac">
-                        <span>👍 12</span> <span>💬 3</span> <a class="link" href="#">답글</a>
-                    </div>
-                </article>
-                <article class="rd-comment">
-                    <header>
-                        <strong>반도체전문가</strong> <span class="muted">1시간 전</span>
-                    </header>
-                    <p>“애플은 TSMC와의 관계가 강화되고 있어서 삼성으로 돌아올 가능성은 낮아 보입니다.”</p>
-                    <div class="rd-reac">
-                        <span>👍 8</span> <span>💬 1</span> <a class="link" href="#">답글</a>
-                    </div>
-                </article>
-                <div class="rd-actions">
-                    <button class="ghost" id="shareBtn">공유하기</button>
-                    <button class="ghost small" id="reportBtn">신고하기</button>
-                </div>
-                <p class="muted center">이 검증 결과가 도움이 되었나요?</p>
-                <div class="rd-vote">
-                    <button class="ghost small" id="voteGood">도움됨</button>
-                    <button class="ghost small" id="voteBad">아쉬움</button>
-                </div>
-            </section>
-        </div>
-    </form>
-</dialog>
-<script src="assets/script.js"></script>
-<script src="home-integration.js"></script>
-<script src="disclosure-integration.js"></script>
+            modalsContainer.innerHTML = submitModal + loginModal + detailModal;
+            console.log('✅ 모든 모달 로드 완료');
+
+            // 모달 컨트롤러 초기화
+            if (window.initializeModals) {
+                window.initializeModals();
+            }
+        } catch (error) {
+            console.error('❌ 모달 로드 실패:', error);
+        }
+    });
+</script>
 </body>
 </html>

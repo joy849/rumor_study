@@ -39,6 +39,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 루머 관련 이벤트 초기화
     function initRumorEvents() {
+        // 루머 제보 버튼
+        const openSubmitBtn = document.getElementById('openSubmit');
+        if (openSubmitBtn) {
+            openSubmitBtn.addEventListener('click', function() {
+                // 로그인이 필요한 기능 보호
+                if (window.AuthManager && !window.AuthManager.isAuthenticated()) {
+                    alert('로그인이 필요한 서비스입니다.');
+                    if (window.LoginModal) {
+                        window.LoginModal.open();
+                    }
+                    return;
+                }
+                if (window.SubmitModal) {
+                    window.SubmitModal.open();
+                }
+            });
+        }
+
         // 루머 검증 버튼
         const runCheckBtn = document.getElementById('runCheck');
         if (runCheckBtn) {
