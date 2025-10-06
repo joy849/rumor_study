@@ -1,0 +1,33 @@
+<!-- 홈화면 대화창 컴포넌트 -->
+<div class="chat-container">
+    <div class="chat-header">
+        <h3>AI 금융 어시스턴트</h3>
+        <span class="status-dot online"></span>
+    </div>
+
+    <div class="chat-messages" id="chatMessages">
+        <div class="message bot">
+            <div class="message-bubble">
+                안녕하세요! 궁금한 금융 정보나 기업 정보를 물어보세요.
+            </div>
+            <div class="message-time">방금 전</div>
+        </div>
+    </div>
+
+    <div class="chat-input-container">
+        <div class="input-wrapper">
+            <input
+                type="text"
+                id="chatInput"
+                class="chat-input"
+                placeholder="예: 메리츠금융지주 2025년 9월 16일 주가는?"
+                maxlength="500"
+            />
+            <button id="sendButton" class="send-button">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>

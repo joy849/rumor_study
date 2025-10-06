@@ -51,6 +51,7 @@ dependencies {
 
     // Database
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    runtimeOnly 'com.h2database:h2' // 개발용 인메모리 데이터베이스
 
 
     // Lombok
