@@ -2,7 +2,7 @@
 
 실시간 공시 정보와 루머 검증을 제공하는 금융 정보 서비스
 
-## 📁 프로젝트 구조
+## 📁 프로젝트 구조 (25.10.04)
 
 ```
 rumor_study/
@@ -194,12 +194,6 @@ server:
 
 - **브라우저 캐시**: 정적 리소스 변경 시 하드 리프레시 필요 (`Ctrl+Shift+R`)
 - **서버 재시작**: JS 파일 수정 후 Spring Boot 서버 재시작 필요
-
-## 👥 기여자
-
-- Backend & Frontend Architecture
-- Security & Authentication
-- UI/UX Design
 
 ---
 
