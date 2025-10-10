@@ -154,7 +154,13 @@ class HomeChat {
 
         const bubbleDiv = document.createElement('div');
         bubbleDiv.className = 'message-bubble';
-        bubbleDiv.textContent = text;
+
+        // bot 메시지는 마크다운으로 렌더링, user 메시지는 텍스트 그대로
+        if (type === 'bot' && typeof marked !== 'undefined') {
+            bubbleDiv.innerHTML = marked.parse(text);
+        } else {
+            bubbleDiv.textContent = text;
+        }
 
         const timeDiv = document.createElement('div');
         timeDiv.className = 'message-time';
@@ -210,11 +216,17 @@ class HomeChat {
                 // 분석 결과 추가
                 const analysisDiv = document.createElement('div');
                 analysisDiv.className = 'additional-analysis';
+
+                // 분석 결과를 마크다운으로 렌더링
+                const renderedAnalysis = typeof marked !== 'undefined'
+                    ? marked.parse(analysis)
+                    : analysis;
+
                 analysisDiv.innerHTML = `
                     <div class="analysis-header">
                         ${mode === 'beginner' ? '🔰' : '📊'} ${mode === 'beginner' ? '초보자' : '애널리스트'} 모드 분석
                     </div>
-                    <div class="analysis-content">${analysis}</div>
+                    <div class="analysis-content">${renderedAnalysis}</div>
                 `;
 
                 messageDiv.appendChild(analysisDiv);

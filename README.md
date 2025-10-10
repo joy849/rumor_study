@@ -74,16 +74,12 @@ rumor_study/
 - **Router**: Hash-based SPA Router
 - **Modals**: Native `<dialog>` API
 
-### Testing
-- **E2E**: Playwright
-
 ## 🚀 시작하기
 
 ### 필수 요구사항
 - Java 17 이상
 - MariaDB 10.x
-- Node.js (Playwright 테스트용)
-
+- (25.10.10 수정 -> 현재 서버 현황 -mysql from 11.8.3-MariaDB, client 15.2 for debian-linux-gnu (x86_64) using  EditLine wrapper)
 ### 데이터베이스 설정
 
 ```sql
@@ -100,16 +96,23 @@ cd stockkkkk
 ./gradlew bootRun
 ```
 
+```bash
+nohup java -jar build/libs/stockkkkk-0.0.1-SNAPSHOT.jar > app.log &
+```
+```
+  주요 Gradle 명령어:
+  ./gradlew clean       # 빌드 결과 삭제
+  ./gradlew build       # 프로젝트 빌드 (테스트 포함)
+  ./gradlew build -x test  # 테스트 없이 빌드
+  ./gradlew bootRun     # 개발 모드로 실행
+
+  빌드 결과물:
+  - JAR 파일: stockkkkk/build/libs/stockkkkk-0.0.1-SNAPSHOT.jar 
+```
+
+
 서버가 `http://localhost:8080`에서 실행됩니다.
 
-### 다른 환경에서 접속
-
-```bash
-# application.yml에서 설정
-server:
-  address: 0.0.0.0  # 모든 IP에서 접속 가능
-  port: 8080
-```
 
 ## 📱 주요 기능
 

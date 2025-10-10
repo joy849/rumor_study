@@ -217,7 +217,13 @@
 <div id="modals-container"></div>
 
 <!-- Scripts -->
-<!-- 1. 공유 서비스 (전역 객체) -->
+<!-- 1. marked.js (마크다운 렌더링) -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<!-- 2. 알림 시스템 (alert 재정의) -->
+<script src="shared/components/modals/alert.js"></script>
+
+<!-- 2. 공유 서비스 (전역 객체) -->
 <script src="shared/services/api-client.js"></script>
 <script src="shared/services/auth-manager.js"></script>
 <script src="shared/services/modal-controller.js"></script>
