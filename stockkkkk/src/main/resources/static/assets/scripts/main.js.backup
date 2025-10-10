@@ -784,12 +784,6 @@ window.addEventListener('keydown', (e)=>{
     }
 })();
 
-// '비밀번호 찾기' 링크 데모 처리
-document.getElementById('findPw')?.addEventListener('click', (e)=>{
-    e.preventDefault();
-    alert('데모: 비밀번호 찾기 플로우로 이동합니다.');
-});
-
 /* ===== alert() 재정의 -> 브라운 알림 다이얼로그 (v4) ===== */
 (function(){
     function ensureNoticeDialog(){
