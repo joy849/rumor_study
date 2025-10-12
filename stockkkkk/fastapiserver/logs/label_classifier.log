@@ -1,0 +1,340 @@
+2025-10-12 20:34:23,864 - munci.lastsa.event_with_translate - INFO - StockEventLabelClassifier initialized.
+2025-10-12 20:34:24,015 - munci.rumerapi.services.gap_verification_service - INFO - DB 설정 없음 - API 전용 모드
+2025-10-12 20:34:24,016 - munci.rumerapi.services.gap_scanner - INFO - 종목코드 매핑 파일 경로: D:\pythonproject\PythonProject10\examples\normalized_aliases.json
+2025-10-12 20:34:24,017 - munci.rumerapi.services.gap_scanner - INFO - 파일 존재 여부: False
+2025-10-12 20:34:24,018 - munci.rumerapi.services.gap_scanner - WARNING - 종목코드 매핑 파일 없음: D:\pythonproject\PythonProject10\examples\normalized_aliases.json
+2025-10-12 20:34:24,019 - munci.rumerapi.services.gap_scanner - WARNING - DB 설정 없음 - Gap 스캔 불가
+2025-10-12 20:34:24,019 - munci.rumerapi.services.gap_checker - WARNING - DB 설정 없음 - Gap 체크 불가
+2025-10-12 20:35:56,045 - munci.lastsa.event_with_translate - INFO - StockEventLabelClassifier initialized.
+2025-10-12 20:35:56,100 - munci.rumerapi.services.gap_verification_service - INFO - DB 설정 없음 - API 전용 모드
+2025-10-12 20:35:56,101 - munci.rumerapi.services.gap_scanner - INFO - 종목코드 매핑 파일 경로: D:\pythonproject\PythonProject10\examples\normalized_aliases.json
+2025-10-12 20:35:56,101 - munci.rumerapi.services.gap_scanner - INFO - 파일 존재 여부: True
+2025-10-12 20:35:56,108 - munci.rumerapi.services.gap_scanner - INFO - 종목코드 매핑 로드 완료: 4629개
+2025-10-12 20:35:56,109 - munci.rumerapi.services.gap_scanner - WARNING - DB 설정 없음 - Gap 스캔 불가
+2025-10-12 20:35:56,109 - munci.rumerapi.services.gap_checker - WARNING - DB 설정 없음 - Gap 체크 불가
+2025-10-12 20:38:51,854 - munci.lastsa.event_with_translate - INFO - StockEventLabelClassifier initialized.
+2025-10-12 20:38:51,915 - munci.rumerapi.services.gap_verification_service - INFO - DB 설정 완료 - 하이브리드 모드 (DB + API)
+2025-10-12 20:38:51,916 - munci.rumerapi.services.gap_scanner - INFO - 종목코드 매핑 파일 경로: D:\pythonproject\PythonProject10\examples\normalized_aliases.json
+2025-10-12 20:38:51,916 - munci.rumerapi.services.gap_scanner - INFO - 파일 존재 여부: True
+2025-10-12 20:38:51,930 - munci.rumerapi.services.gap_scanner - INFO - 종목코드 매핑 로드 완료: 4629개
+2025-10-12 20:42:04,057 - munci.rumerapi.services.gap_checker - ERROR - Price change failed: (1054, "Unknown column '회사명' in 'WHERE'")
+Traceback (most recent call last):
+  File "D:\pythonproject\PythonProject10\munci\rumerapi\services\gap_checker.py", line 139, in _get_price_change
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+                   SELECT (MAX(종가) - MIN(종가)) / MIN(종가) * 100 as change_pct
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+                     AND 날짜 >= %s
+                     ^^^^^^^^^^^^^^
+                   """, (stock_code, start_date))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+    ~~~~~~~~~~^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+    ~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1054, "Unknown column '회사명' in 'WHERE'")
+2025-10-12 20:45:05,081 - munci.rumerapi.services.gap_checker - ERROR - Price change failed: (1054, "Unknown column '회사명' in 'WHERE'")
+Traceback (most recent call last):
+  File "D:\pythonproject\PythonProject10\munci\rumerapi\services\gap_checker.py", line 139, in _get_price_change
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+                   SELECT (MAX(종가) - MIN(종가)) / MIN(종가) * 100 as change_pct
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+                     AND 날짜 >= %s
+                     ^^^^^^^^^^^^^^
+                   """, (stock_code, start_date))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+    ~~~~~~~~~~^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+    ~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1054, "Unknown column '회사명' in 'WHERE'")
+2025-10-12 20:45:38,359 - munci.lastsa.event_with_translate - INFO - StockEventLabelClassifier initialized.
+2025-10-12 20:45:38,407 - munci.rumerapi.services.gap_verification_service - INFO - DB 설정 완료 - 하이브리드 모드 (DB + API)
+2025-10-12 20:45:38,408 - munci.rumerapi.services.gap_scanner - INFO - 종목코드 매핑 파일 경로: D:\pythonproject\PythonProject10\examples\normalized_aliases.json
+2025-10-12 20:45:38,409 - munci.rumerapi.services.gap_scanner - INFO - 파일 존재 여부: True
+2025-10-12 20:45:38,423 - munci.rumerapi.services.gap_scanner - INFO - 종목코드 매핑 로드 완료: 4629개
+2025-10-12 20:45:40,835 - munci.rumerapi.services.gap_checker - ERROR - Price change failed: (1054, "Unknown column '회사명' in 'WHERE'")
+Traceback (most recent call last):
+  File "D:\pythonproject\PythonProject10\munci\rumerapi\services\gap_checker.py", line 139, in _get_price_change
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+                   SELECT (MAX(종가) - MIN(종가)) / MIN(종가) * 100 as change_pct
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+                     AND 날짜 >= %s
+                     ^^^^^^^^^^^^^^
+                   """, (stock_code, start_date))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+    ~~~~~~~~~~^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+    ~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1054, "Unknown column '회사명' in 'WHERE'")
+2025-10-12 20:56:44,944 - munci.lastsa.event_with_translate - INFO - StockEventLabelClassifier initialized.
+2025-10-12 20:56:44,996 - munci.rumerapi.services.gap_verification_service - INFO - DB 설정 완료 - 하이브리드 모드 (DB + API)
+2025-10-12 20:56:44,997 - munci.rumerapi.services.gap_scanner - INFO - 종목코드 매핑 파일 경로: D:\pythonproject\PythonProject10\examples\normalized_aliases.json
+2025-10-12 20:56:44,997 - munci.rumerapi.services.gap_scanner - INFO - 파일 존재 여부: True
+2025-10-12 20:56:45,004 - munci.rumerapi.services.gap_scanner - INFO - 종목코드 매핑 로드 완료: 4629개
+2025-10-12 20:57:06,500 - munci.rumerapi.services.gap_checker - ERROR - Price change failed: (1054, "Unknown column '회사명' in 'WHERE'")
+Traceback (most recent call last):
+  File "D:\pythonproject\PythonProject10\munci\rumerapi\services\gap_checker.py", line 139, in _get_price_change
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+                   SELECT (MAX(종가) - MIN(종가)) / MIN(종가) * 100 as change_pct
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+                     AND 날짜 >= %s
+                     ^^^^^^^^^^^^^^
+                   """, (stock_code, start_date))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+    ~~~~~~~~~~^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+    ~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1054, "Unknown column '회사명' in 'WHERE'")
+2025-10-12 20:57:08,818 - munci.rumerapi.services.gap_checker - ERROR - Price change failed: (1054, "Unknown column '회사명' in 'WHERE'")
+Traceback (most recent call last):
+  File "D:\pythonproject\PythonProject10\munci\rumerapi\services\gap_checker.py", line 139, in _get_price_change
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+                   SELECT (MAX(종가) - MIN(종가)) / MIN(종가) * 100 as change_pct
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+                     AND 날짜 >= %s
+                     ^^^^^^^^^^^^^^
+                   """, (stock_code, start_date))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+    ~~~~~~~~~~^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+    ~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1054, "Unknown column '회사명' in 'WHERE'")
+2025-10-12 20:57:11,349 - munci.rumerapi.services.gap_checker - ERROR - Price change failed: (1054, "Unknown column '회사명' in 'WHERE'")
+Traceback (most recent call last):
+  File "D:\pythonproject\PythonProject10\munci\rumerapi\services\gap_checker.py", line 139, in _get_price_change
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+                   SELECT (MAX(종가) - MIN(종가)) / MIN(종가) * 100 as change_pct
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+                     AND 날짜 >= %s
+                     ^^^^^^^^^^^^^^
+                   """, (stock_code, start_date))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+    ~~~~~~~~~~^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+    ~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1054, "Unknown column '회사명' in 'WHERE'")
+2025-10-12 20:57:14,518 - munci.rumerapi.services.gap_checker - ERROR - Price change failed: (1054, "Unknown column '회사명' in 'WHERE'")
+Traceback (most recent call last):
+  File "D:\pythonproject\PythonProject10\munci\rumerapi\services\gap_checker.py", line 139, in _get_price_change
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+                   SELECT (MAX(종가) - MIN(종가)) / MIN(종가) * 100 as change_pct
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+                     AND 날짜 >= %s
+                     ^^^^^^^^^^^^^^
+                   """, (stock_code, start_date))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+    ~~~~~~~~~~^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+    ~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1054, "Unknown column '회사명' in 'WHERE'")
+2025-10-12 20:57:17,338 - munci.rumerapi.services.gap_checker - ERROR - Price change failed: (1054, "Unknown column '회사명' in 'WHERE'")
+Traceback (most recent call last):
+  File "D:\pythonproject\PythonProject10\munci\rumerapi\services\gap_checker.py", line 139, in _get_price_change
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+                   SELECT (MAX(종가) - MIN(종가)) / MIN(종가) * 100 as change_pct
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+                     AND 날짜 >= %s
+                     ^^^^^^^^^^^^^^
+                   """, (stock_code, start_date))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+    ~~~~~~~~~~^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+    ~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1054, "Unknown column '회사명' in 'WHERE'")
+2025-10-12 20:57:19,876 - munci.rumerapi.services.gap_checker - ERROR - Price change failed: (1054, "Unknown column '회사명' in 'WHERE'")
+Traceback (most recent call last):
+  File "D:\pythonproject\PythonProject10\munci\rumerapi\services\gap_checker.py", line 139, in _get_price_change
+    cursor.execute("""
+    ~~~~~~~~~~~~~~^^^^
+                   SELECT (MAX(종가) - MIN(종가)) / MIN(종가) * 100 as change_pct
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+                     AND 날짜 >= %s
+                     ^^^^^^^^^^^^^^
+                   """, (stock_code, start_date))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+    ~~~~~~~~~~^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 575, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+                          ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 826, in _read_query_result
+    result.read()
+    ~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 1203, in read
+    first_packet = self.connection._read_packet()
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\connections.py", line 782, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\pythonproject\PythonProject10\.venv\Lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.OperationalError: (1054, "Unknown column '회사명' in 'WHERE'")
+2025-10-12 20:58:01,343 - munci.lastsa.event_with_translate - INFO - StockEventLabelClassifier initialized.
+2025-10-12 20:58:01,388 - munci.rumerapi.services.gap_verification_service - INFO - DB 설정 완료 - 하이브리드 모드 (DB + API)
+2025-10-12 20:58:01,388 - munci.rumerapi.services.gap_scanner - INFO - 종목코드 매핑 파일 경로: D:\pythonproject\PythonProject10\examples\normalized_aliases.json
+2025-10-12 20:58:01,389 - munci.rumerapi.services.gap_scanner - INFO - 파일 존재 여부: True
+2025-10-12 20:58:01,396 - munci.rumerapi.services.gap_scanner - INFO - 종목코드 매핑 로드 완료: 4629개

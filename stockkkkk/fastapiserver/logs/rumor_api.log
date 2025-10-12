@@ -1,0 +1,12 @@
+2025-10-12 20:34:23,503 - munci.rumerapi.services.rumor_service - INFO - DB 설정 없음 - API 전용 모드
+2025-10-12 20:34:23,798 - munci.rumerapi.extractors.companyGpt - INFO - FinalCompanyExtractor initialized
+2025-10-12 20:35:55,908 - munci.rumerapi.services.rumor_service - INFO - DB 설정 없음 - API 전용 모드
+2025-10-12 20:35:55,996 - munci.rumerapi.extractors.companyGpt - INFO - FinalCompanyExtractor initialized
+2025-10-12 20:38:51,740 - munci.rumerapi.services.rumor_service - INFO - DB 설정 완료 - 하이브리드 모드 (DB + API)
+2025-10-12 20:38:51,824 - munci.rumerapi.extractors.companyGpt - INFO - FinalCompanyExtractor initialized
+2025-10-12 20:45:38,283 - munci.rumerapi.services.rumor_service - INFO - DB 설정 완료 - 하이브리드 모드 (DB + API)
+2025-10-12 20:45:38,346 - munci.rumerapi.extractors.companyGpt - INFO - FinalCompanyExtractor initialized
+2025-10-12 20:56:44,863 - munci.rumerapi.services.rumor_service - INFO - DB 설정 완료 - 하이브리드 모드 (DB + API)
+2025-10-12 20:56:44,930 - munci.rumerapi.extractors.companyGpt - INFO - FinalCompanyExtractor initialized
+2025-10-12 20:58:01,268 - munci.rumerapi.services.rumor_service - INFO - DB 설정 완료 - 하이브리드 모드 (DB + API)
+2025-10-12 20:58:01,330 - munci.rumerapi.extractors.companyGpt - INFO - FinalCompanyExtractor initialized
